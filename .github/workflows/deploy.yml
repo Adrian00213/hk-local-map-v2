@@ -1,0 +1,50 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Create deployment
+      run: |
+        # 確保有index.html
+        if [ ! -f "index.html" ]; then
+          echo "錯誤: index.html不存在"
+          exit 1
+        fi
+        
+        # 創建.nojekyll文件
+        touch .nojekyll
+        
+        # 顯示部署信息
+        echo "🎮 部署 Minecraft香港地圖 - 全新版本"
+        echo "時間: $(date)"
+        echo "分支: main"
+        echo "文件:"
+        ls -la
+        
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: .
+    
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
