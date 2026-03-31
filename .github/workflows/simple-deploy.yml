@@ -1,0 +1,46 @@
+name: Simple GitHub Pages Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup
+      run: |
+        echo "🎮 開始部署 Minecraft香港地圖"
+        echo "時間: $(date)"
+        echo "倉庫: hk-local-map-v2"
+        echo "分支: ${{ github.ref }}"
+        
+        # 檢查必要文件
+        if [ -f "index.html" ]; then
+          echo "✅ index.html 存在"
+        else
+          echo "❌ 錯誤: index.html 不存在"
+          exit 1
+        fi
+        
+        # 創建.nojekyll文件
+        touch .nojekyll
+        echo "✅ 創建 .nojekyll 文件"
+        
+        # 顯示文件結構
+        echo "📁 文件結構:"
+        ls -la
+    
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: .
+        publish_branch: gh-pages
+        force_orphan: true
+        cname: adrian00213.github.io
